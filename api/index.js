@@ -9,6 +9,7 @@ const authRoutes = require('./routes/auth');
 const profileRoutes = require('./routes/profile.js');
 const projectRoutes = require('./routes/projects');
 const skillRoutes = require('./routes/skills');
+const contactRoute = require('./routes/contact.js');
 
 
 const app = express();
@@ -23,6 +24,7 @@ const uploadRoutes = require('./uploadRoutes');
 
 // Serve static files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 // Upload route
 app.use('/api/upload', uploadRoutes);
@@ -31,7 +33,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/skills', skillRoutes);
-
+app.use("/api/contact", contactRoute);
 
 app.get('/', (req, res) => res.send('MERN Portfolio Backend is running'));
 

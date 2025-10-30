@@ -11,6 +11,7 @@ const ProjectManager = () => {
     description: "",
     projectDescription: "",
     technologies: "",
+    image:"",
     src: "",
     codeSrc: "",
   });
@@ -20,6 +21,7 @@ const ProjectManager = () => {
     projectDescription: "",
     technologies: "",
     src: "",
+    image:"",
     codeSrc: "",
   });
   const [projectImage, setProjectImage] = useState(null);
@@ -48,8 +50,8 @@ const ProjectManager = () => {
       description: "",
       projectDescription: "",
       technologies: "",
-      image: "",
-      src: await uploadImage(projectImage),
+      src: "",
+      image: await uploadImage(projectImage),
       codeSrc: "",
     });
   };
@@ -83,6 +85,7 @@ const ProjectManager = () => {
         <label>Project Image</label>
         <input
           type="file"
+          name="image"
           accept="image/*"
           onChange={(e) => setProjectImage(e.target.files[0])}
           className="w-full"

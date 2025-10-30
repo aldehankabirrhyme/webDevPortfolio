@@ -36,7 +36,7 @@ function ProjectCard(props) {
                   <img  
                     className="w-full h-48 object-cover transition-transform duration-300 hover:scale-110"
                     alt={`${props.project.title} screenshot`}
-                   src={`${props.project.src ? import.meta.env.VITE_BACKEND_URL + props.project.src : 'https://images.unsplash.com/photo-1595872018818-97555653a011'}`} />
+                   src={`${props.project.image ? import.meta.env.VITE_BACKEND_URL + props.project.image : 'https://images.unsplash.com/photo-1595872018818-97555653a011'}`} />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300" />
                 </div>
                 

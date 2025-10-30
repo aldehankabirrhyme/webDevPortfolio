@@ -7,6 +7,8 @@ import { AuthProvider } from "./context/AuthContext";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import Login from "./pages/auth/Login";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsAndConditions from "./pages/TermsConditions";
 import Dashboard from "./pages/Dashboard";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -31,6 +33,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 
           {/* Public */}
           <Route path="/" element={<App />} />
+          <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" />} />

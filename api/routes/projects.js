@@ -2,6 +2,7 @@ const express7 = require('express');
 const router3 = express7.Router();
 const auth2 = require('../middleware/auth');
 const Project3 = require('../models/Project');
+const fs = require('fs');
 
 
 // List all projects for logged in user
@@ -20,6 +21,7 @@ res.status(500).json({ message: 'Server error' });
 router3.get('/:id', auth2, async (req, res) => {
 try {
 const project = await Project3.findById(req.params.id).lean();
+console.log(project);
 if (!project || String(project.user) !== String(req.userId)) return res.status(404).json({ message: 'Not found' });
 res.json({ project });
 } catch (err) {
@@ -48,8 +50,29 @@ router3.put('/:id', auth2, async (req, res) => {
 try {
 const project = await Project3.findById(req.params.id);
 if (!project || String(project.user) !== String(req.userId)) return res.status(404).json({ message: 'Not found' });
-['title', 'description', 'projectDescription', 'technologies', 'image','src','codeSrc'].forEach((k) => {
+
+if(req.body.image !== undefined ){
+    const newImageUrl = req.body.image.substring(1);
+    const oldImagePath = project.image.substring(1);
+    if(newImageUrl!== oldImagePath && fs.existsSync(oldImagePath)){
+        try {
+        fs.unlinkSync(oldImagePath);
+        console.log(`File '${oldImagePath}' deleted successfully.`);
+      } catch (error) {
+        if (error.code === 'ENOENT') {
+          console.log(`File '${oldImagePath}' does not exist.`);
+        } else {
+          console.error(`Error deleting file '${oldImagePath}':`, error);
+        }
+      }
+    }
+}
+
+
+
+['title', 'description', 'projectDescription', 'technologies', 'image','src','codeSrc'].forEach(async (k) => {
 if (req.body[k] !== undefined) project[k] = req.body[k];
+
 });
 await project.save();
 res.json({ project });

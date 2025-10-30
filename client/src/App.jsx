@@ -9,6 +9,8 @@ import ProjectCard from '@/components/ui/ProjectCard';
 import { useToast } from '@/components/ui/use-toast';
 import { Toaster } from '@/components/ui/toaster';
 import {useAuth} from './context/AuthContext'
+import axios from "axios";
+
 function App() {
   const {data} = useAuth();
   const [darkMode, setDarkMode] = useState(true);
@@ -32,6 +34,15 @@ function App() {
   const [facebookLink,setFacebookLink] =useState(null);
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const [status, setStatus] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    mail: "",
+    message: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleLinkAction = (url) => {
     try {
@@ -227,20 +238,20 @@ function App() {
   };
 
   const handleContactSubmit = async(e) => {
-    e.preventDefault();
+ e.preventDefault();
+ 
+    setStatus("Sending...");
 
-      const formData = new FormData(e.target);
-    const res = await fetch(formEndpoint, {
-      method: "POST",
-      body: formData,
-      headers: { Accept: "application/json" },
-    });
-
-    if (res.ok) {
+    try {
+      
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/contact`,
+        formData
+      );
       setStatus("Message sent successfully!");
-      e.target.reset();
-    } else {
-      setStatus("Something went wrong. Please try again.");
+      setFormData({ name: "", mail: "", message: "" });
+    } catch (err) {
+      setStatus("Failed to send message. Try again later.");
     }
     
     // toast({
@@ -571,6 +582,9 @@ function App() {
                     <label className="block text-sm font-medium mb-2 text-purple-400">Name</label>
                     <input
                       type="text"
+                      name='name'
+                      value={formData.name}
+                      onChange={handleChange}
                       className={`w-full px-4 py-3 rounded-lg border transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400 ${
                         darkMode ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-gray-300 text-gray-900'
                       }`}
@@ -582,6 +596,9 @@ function App() {
                     <label className="block text-sm font-medium mb-2 text-purple-400">Email</label>
                     <input
                       type="email"
+                      name='mail'
+                      value={formData.mail}
+                      onChange={handleChange}
                       className={`w-full px-4 py-3 rounded-lg border transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400 ${
                         darkMode ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-gray-300 text-gray-900'
                       }`}
@@ -592,6 +609,9 @@ function App() {
                   <div>
                     <label className="block text-sm font-medium mb-2 text-purple-400">Message</label>
                     <textarea
+                    name='message'
+                    value={formData.message}
+                    onChange={handleChange}
                       rows={4}
                       className={`w-full px-4 py-3 rounded-lg border transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none ${
                         darkMode ? 'bg-slate-700 border-slate-600 text-white' : 'bg-white border-gray-300 text-gray-900'
@@ -601,6 +621,7 @@ function App() {
                   </div>
                   
                   <Button
+
                     type="submit"
                     className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-3 text-lg"
                   >
@@ -630,15 +651,32 @@ function App() {
 
       {/* Footer */}
       <footer className={`py-8 px-4 border-t ${darkMode ? 'border-purple-500/20 bg-slate-900/50' : 'border-indigo-200/50 bg-white/50'}`}>
-        <div className="max-w-4xl mx-auto text-center">
-          <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-            © 2024 {devName}. All rights reserved.
-          </p>
-          <p className={`mt-2 ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>
-            Visit my website: <span className="text-purple-400">aldehankabir.com</span>
-          </p>
-        </div>
-      </footer>
+  <div className="max-w-4xl mx-auto text-center space-y-2">
+    <p className={`${darkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+      © 2024 {devName}. All rights reserved.
+    </p>
+    <p className={`mt-2 ${darkMode ? 'text-gray-500' : 'text-gray-500'}`}>
+      Visit my website: <span className="text-purple-400">aldehankabir.com</span>
+    </p>
+    <div className="mt-2 space-x-4">
+      <a 
+        href="/privacy-policy" 
+        target='_blank'
+        className={`underline ${darkMode ? 'text-gray-400 hover:text-purple-400' : 'text-gray-600 hover:text-indigo-600'}`}
+      >
+        Privacy Policy
+      </a>
+      <a 
+        href="/terms-and-conditions" 
+         target='_blank'
+        className={`underline ${darkMode ? 'text-gray-400 hover:text-purple-400' : 'text-gray-600 hover:text-indigo-600'}`}
+      >
+        Terms & Conditions
+      </a>
+    </div>
+  </div>
+</footer>
+
 
       <Toaster />
 

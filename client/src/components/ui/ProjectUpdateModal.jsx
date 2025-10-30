@@ -10,7 +10,9 @@ export default function ProjectUpdateModal({ isOpen, onClose, formData, darkMode
     description: "",
     projectDescription: "",
     src: "",
+    image: "",
     codeSrc: "",
+    technologies: "",
   });
 
   // Upload image to server and return file URL
@@ -35,10 +37,12 @@ export default function ProjectUpdateModal({ isOpen, onClose, formData, darkMode
         title: formData.title || "",
         description: formData.description || "",
         projectDescription: formData.projectDescription || "",
-        src: formData.src || "", // পুরনো src রাখবে, upload করবে না
+        image: formData.image || "", // পুরনো src রাখবে, upload করবে না
+        src: formData.src || "",
         codeSrc: formData.codeSrc || "",
       });
       setProjectImage(null); // modal খোলার সময় image reset হবে
+      // setProjectImage(formData.image); // modal খোলার সময় image reset হবে
     }
   }, [formData]);
 
@@ -50,7 +54,7 @@ export default function ProjectUpdateModal({ isOpen, onClose, formData, darkMode
     }
 
     try {
-      let imageUrl = form.src; // default: আগের image url
+      let imageUrl = form.image; // default: আগের image url
 
       // যদি নতুন image select করা হয় তাহলে upload করবে
       if (projectImage) {
@@ -59,12 +63,12 @@ export default function ProjectUpdateModal({ isOpen, onClose, formData, darkMode
 
       await axiosClient.put(`/api/projects/${form._id}`, {
         ...form,
-        src: imageUrl,
+        image: imageUrl,
       });
 
       fetchDashboardData();
       onClose();
-      setForm({ title: "", description: "", projectDescription: "", src: "", codeSrc: "" });
+      setForm({ title: "", description: "", projectDescription: "", src: "",image:"", codeSrc: "" });
       setProjectImage(null);
 
     } catch (error) {
@@ -97,21 +101,38 @@ export default function ProjectUpdateModal({ isOpen, onClose, formData, darkMode
               type="text"
               placeholder="Enter project title"
               value={form.title}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
+              onChange={(e) => {setForm({ ...form, title: e.target.value })
+            }}
               className="border border-gray-300 dark:border-gray-600 p-2 rounded w-full focus:ring focus:ring-indigo-300"
             />
           </div>
 
           {/* Project Image */}
-          <div>
-            <label>Project Image</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setProjectImage(e.target.files[0])}
-              className="w-full"
-            />
-          </div>
+          {/* Project Image */}
+<div>
+  <label className="block mb-1 text-sm font-medium">Project Image</label>
+  <input
+    name="image"
+    type="file"
+    accept="image/*"
+    onChange={(e) => {
+      setProjectImage(e.target.files[0]);
+    }}
+    className="w-full"
+  />
+
+  {/* Optional: show old image or preview new one */}
+  {projectImage ? (
+    <p className="text-sm mt-1 text-green-500">New image selected: {projectImage.name}</p>
+  ) : form.image ? (
+    <img
+      src={import.meta.env.VITE_BACKEND_URL + form.image}
+      alt="Current Project"
+      className="mt-2 rounded-md border w-32 h-32 object-cover"
+    />
+  ) : null}
+</div>
+
 
           {/* Short Description */}
           <div>

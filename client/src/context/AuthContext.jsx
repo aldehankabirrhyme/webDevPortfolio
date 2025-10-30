@@ -25,7 +25,6 @@ export const AuthProvider = ({ children }) => {
             Authorization: `Bearer ${token}`, // Send token to backend
           },
         });
-        // console.log("Dashboard Data:", response.data);
   
         setData({
           user: response.data.user[0],

@@ -52,8 +52,8 @@ const project = await Project3.findById(req.params.id);
 if (!project || String(project.user) !== String(req.userId)) return res.status(404).json({ message: 'Not found' });
 
 if(req.body.image !== undefined ){
-    const newImageUrl = req.body.image.substring(1);
-    const oldImagePath = project.image.substring(1);
+    const newImageUrl = req.body.image ? req.body.image.substring(1) : null;
+    const oldImagePath = project.image ? project.image.substring(1) : null;
     if(newImageUrl!== oldImagePath && fs.existsSync(oldImagePath)){
         try {
         fs.unlinkSync(oldImagePath);

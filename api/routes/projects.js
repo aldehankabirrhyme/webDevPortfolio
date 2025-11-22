@@ -88,7 +88,7 @@ router3.delete('/:id', auth2, async (req, res) => {
 try {
 const project = await Project3.findById(req.params.id);
 if (!project || String(project.user) !== String(req.userId)) return res.status(404).json({ message: 'Not found' });
-await project.remove();
+await project.deleteOne();
 res.json({ message: 'Deleted' });
 } catch (err) {
 console.error(err);

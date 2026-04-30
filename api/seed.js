@@ -119,7 +119,7 @@ async function seed() {
     // set a default password so you can login after seeding: 'password123'
     const bcrypt2 = require('bcryptjs');
     user.passwordHash = await bcrypt2.hash('password123', 10);
-     console.log('Updated passwordHash', user.passwordHash);
+    console.log('Updated passwordHash', user.passwordHash);
     await user.save();
     console.log('Created user:', user.email, 'with default password: password123');
   } else {
@@ -138,7 +138,7 @@ async function seed() {
     user.fbLink = data.FBlink;
     const bcrypt2 = require('bcryptjs');
     user.passwordHash = await bcrypt2.hash('password123', 10);
-     console.log('Updated passwordHash', user.passwordHash);
+    console.log('Updated passwordHash', user.passwordHash);
     await user.save();
     console.log('Updated existing user:', user.email);
   }

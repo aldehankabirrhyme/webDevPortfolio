@@ -9,20 +9,20 @@ const path = require("path")
 
 // Get full profile (user + projects + skills)
 router2.get('/', async (req, res) => {
-try {
-// const user = await User2.findById(req.userId).lean();
-const user = await User2.find().lean();
-// await User2.findByIdAndDelete("68a13bc2d5e6e7eab1eb645d");
-if (!user) return res.status(404).json({ message: 'User not found' });
-// const projects = await Project2.find({ user: req.userId }).lean();
-const projects = await Project2.find().lean();
-// const skills = await Skill2.find({ user: req.userId }).lean();
-const skills = await Skill2.find().lean();
-res.json({ user, projects, skills });
-} catch (err) {
-console.error(err);
-res.status(500).json({ message: 'Server error' });
-}
+  try {
+    // const user = await User2.findById(req.userId).lean();
+    const user = await User2.find().lean();
+    // await User2.findByIdAndDelete("68a13bc2d5e6e7eab1eb645d");
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    // const projects = await Project2.find({ user: req.userId }).lean();
+    const projects = await Project2.find().lean();
+    // const skills = await Skill2.find({ user: req.userId }).lean();
+    const skills = await Skill2.find().lean();
+    res.json({ user, projects, skills });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
 });
 
 
@@ -40,17 +40,17 @@ router2.put("/", auth, async (req, res) => {
       // Only delete if new image is different & old file exists
       if (oldImagePath && newImageUrl !== oldImagePath) {
         try {
-          if(fs.existsSync(oldImagePath)){
-               fs.unlinkSync(oldImagePath);
-               console.log(`Deleted old profile image: ${oldImagePath}`);
-          }else console.log(`Old file not found: ${oldImagePath}`);
-          
+          if (fs.existsSync(oldImagePath)) {
+            fs.unlinkSync(oldImagePath);
+            console.log(`Deleted old profile image: ${oldImagePath}`);
+          } else console.log(`Old file not found: ${oldImagePath}`);
+
         } catch (error) {
-            console.error("Error deleting old file:", error);
+          console.error("Error deleting old file:", error);
         }
       }
 
-      user.profileImageSrc =  `/${newImageUrl}` ;
+      user.profileImageSrc = `/${newImageUrl}`;
     }
 
     // ✅ Handle profile Cover image aboutMeCoverImage
@@ -61,17 +61,17 @@ router2.put("/", auth, async (req, res) => {
       // Only delete if new image is different & old file exists
       if (oldCoverImagePath && newCoverImageUrl !== oldCoverImagePath) {
         try {
-          if(fs.existsSync(oldCoverImagePath)){
-               fs.unlinkSync(oldCoverImagePath);
-               console.log(`Deleted old profile Cover image: ${oldCoverImagePath}`);
-          }else console.log(`Old file not found: ${oldCoverImagePath}`);
-          
+          if (fs.existsSync(oldCoverImagePath)) {
+            fs.unlinkSync(oldCoverImagePath);
+            console.log(`Deleted old profile Cover image: ${oldCoverImagePath}`);
+          } else console.log(`Old file not found: ${oldCoverImagePath}`);
+
         } catch (error) {
-            console.error("Error deleting old file:", error);
+          console.error("Error deleting old file:", error);
         }
       }
 
-      user.aboutMeCoverImage =  `/${newCoverImageUrl}` ;
+      user.aboutMeCoverImage = `/${newCoverImageUrl}`;
     }
 
     // ✅ Allowed fields update

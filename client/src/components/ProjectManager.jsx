@@ -138,8 +138,8 @@ const ProjectManager = () => {
               </tr>
             </thead>
             <tbody>
-              {data?.projects?.length > 0 ? (
-                data.projects.map((p) => (
+              {data?.projectsAdmin?.length > 0 ? (
+                data.projectsAdmin.map((p) => (
                   <tr
                     key={p._id}
                     className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition"

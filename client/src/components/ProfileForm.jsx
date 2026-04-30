@@ -98,7 +98,9 @@ const ProfileForm = () => {
       fetchDashboardData();
       alert("Profile updated successfully!");
     } catch (error) {
-      console.error("Error updating profile:", error.response?.data || error.message);
+      if(import.meta.env.VITE_NODE_ENV === 'development') {
+        console.error("Error updating profile:", error.response?.data || error.message);
+      }
       alert("Failed to update profile.");
     }
   };

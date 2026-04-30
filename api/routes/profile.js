@@ -13,14 +13,15 @@ router.get('/', async (req, res) => {
   try {
     // সাধারণত পোর্টফোলিওতে একজনই ইউজার থাকে, তাই প্রথম ইউজারটি নেওয়া হচ্ছে।
     const user = await User.findOne().select("-passwordHash").lean(); 
-    
+    console.log("Fetched user profile:", user);
     if (!user) return res.status(404).json({ message: 'Profile data not found' });
 
     // শুধুমাত্র যে প্রজেক্টগুলো isVisible: true, সেগুলো পাবলিকলি দেখাবে।
     const projects = await Project.find({ isVisible: true }).sort({ createdAt: -1 }).lean();
+    const projectsAdmin = await Project.find().sort({ createdAt: -1 }).lean();
     const skills = await Skill.find().sort({ createdAt: 1 }).lean();
 
-    res.json({ user, projects, skills });
+    res.json({ user, projects, projectsAdmin, skills });
   } catch (err) {
     res.status(500).json({ message: 'Server error fetching profile' });
   }
@@ -31,6 +32,7 @@ router.put("/", auth, async (req, res) => {
   try {
     // req.userId আসছে আপনার auth middleware থেকে
     const user = await User.findById(req.userId);
+
     if (!user) return res.status(404).json({ message: "User not found" });
 
     // ইমেজ ডিলিট করার জন্য একটি কমন ফাংশন (Clean Code Practice)

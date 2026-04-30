@@ -27,7 +27,8 @@ export const AuthProvider = ({ children }) => {
         });
   
         setData({
-          user: response.data.user[0],
+          user: response.data.user || null,
+          projectsAdmin : response.data.projectsAdmin || [],
           projects: response.data.projects || [],
           skills: response.data.skills || [],
         });

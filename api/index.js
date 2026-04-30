@@ -29,9 +29,9 @@ app.set('trust proxy', 1);
 
 
 const  server = app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
-// , { useNewUrlParser: true, useUnifiedTopology: true }
+
 mongoose
-    .connect(MONGO)
+    .connect(MONGO, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
         console.log('MongoDB connected');
        
@@ -52,7 +52,7 @@ app.use(cors({
     credentials: true
 }));
 
-app.use(express.json({ limit: '5mb' }));
+app.use(express.json({ limit: '1mb' }));
 const logger = process.env.NODE_ENV === 'production' ? 'combined' : 'dev';
 app.use('/api', morgan(logger));
 

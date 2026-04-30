@@ -1,64 +1,81 @@
-const express8 = require('express');
-const router4 = express8.Router();
-const auth3 = require('../middleware/auth');
-const Skill3 = require('../models/Skill');
+const express = require('express');
+const router = express.Router();
+const auth = require('../middleware/auth');
+const Skill = require('../models/Skill');
 
-
-// List skills
-router4.get('/', auth3, async (req, res) => {
+// ১. List skills (সবাই দেখতে পারবে, তাই auth মিডলওয়্যার সরিয়ে দিয়েছি)
+// পোর্টফোলিওতে স্কিল লিস্ট পাবলিক হওয়া উচিত যাতে ভিজিটররা দেখতে পায়। 
+// আপনি যদি শুধু অ্যাডমিন প্যানেলের জন্য চান, তবে auth রাখতে পারেন।
+router.get('/', async (req, res) => {
     try {
-        const skills = await Skill3.find({ user: req.userId }).sort({ createdAt: -1 }).lean();
+        // lean() ব্যবহার করা হয়েছে পারফরম্যান্স বাড়ানোর জন্য
+        const skills = await Skill.find().sort({ createdAt: 1 }).lean();
         res.json({ skills });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ status: 'error', message: 'Failed to fetch skills' });
     }
 });
 
-
-// Create skill
-router4.post('/', auth3, async (req, res) => {
+// ২. Create skill
+router.post('/', auth, async (req, res) => {
     try {
         const { category, iconName, items } = req.body;
-        const skill = new Skill3({ user: req.userId, category, iconName, items });
-        await skill.save();
-        res.json({ skill });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Server error' });
-    }
-});
 
+        // সিম্পল ভ্যালিডেশন
+        if (!category || !items || !Array.isArray(items)) {
+            return res.status(400).json({ message: 'Category and an array of items are required.' });
+        }
 
-// Update skill
-router4.put('/:id', auth3, async (req, res) => {
-    try {
-        const skill = await Skill3.findById(req.params.id);
-        if (!skill || String(skill.user) !== String(req.userId)) return res.status(404).json({ message: 'Not found' });
-        ['category', 'iconName', 'items'].forEach((k) => {
-            if (req.body[k] !== undefined) skill[k] = req.body[k];
+        const skill = new Skill({
+            user: req.userId,
+            category,
+            iconName,
+            items
         });
+
         await skill.save();
-        res.json({ skill });
+        res.status(201).json({ status: 'success', skill });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: 'Server error while creating skill' });
     }
 });
 
-
-// Delete skill
-router4.delete('/:id', auth3, async (req, res) => {
+// ৩. Update skill
+router.put('/:id', auth, async (req, res) => {
     try {
-        const skill = await Skill3.findById(req.params.id);
-        if (!skill || String(skill.user) !== String(req.userId)) return res.status(404).json({ message: 'Not found' });
-        await skill.remove();
-        res.json({ message: 'Deleted' });
+        const { category, iconName, items } = req.body;
+
+        // findOneAndUpdate ব্যবহার করলে কোড অনেক ক্লিন হয় এবং ওনারশিপ চেক একসাথেই করা যায়
+        const skill = await Skill.findOneAndUpdate(
+            { _id: req.params.id, user: req.userId },
+            { $set: { category, iconName, items } },
+            { new: true, runValidators: true }
+        );
+
+        if (!skill) return res.status(404).json({ message: 'Skill not found or unauthorized' });
+
+        res.json({ status: 'success', skill });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: 'Server error during update' });
     }
 });
 
+// ৪. Delete skill
+router.delete('/:id', auth, async (req, res) => {
+    try {
+        // .remove() এর বদলে .deleteOne() বা .findOneAndDelete() ব্যবহার করুন
+        const result = await Skill.findOneAndDelete({
+            _id: req.params.id,
+            user: req.userId
+        });
 
-module.exports = router4;
+        if (!result) return res.status(404).json({ message: 'Skill not found or unauthorized' });
+
+        res.json({ status: 'success', message: 'Skill deleted successfully' });
+    } catch (err) {
+        res.status(500).json({ message: 'Server error during deletion' });
+    }
+});
+
+module.exports = router;

@@ -24,10 +24,14 @@ process.on('uncaughtException', (err) => {
     process.exit(1);
 });
 const app = express();
-const  server = app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
 
+app.set('trust proxy', 1);
+
+
+const  server = app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
+// , { useNewUrlParser: true, useUnifiedTopology: true }
 mongoose
-    .connect(MONGO, { useNewUrlParser: true, useUnifiedTopology: true })
+    .connect(MONGO)
     .then(() => {
         console.log('MongoDB connected');
        
@@ -48,7 +52,7 @@ app.use(cors({
     credentials: true
 }));
 
-app.use(express.json({ limit: '1mb' }));
+app.use(express.json({ limit: '5mb' }));
 const logger = process.env.NODE_ENV === 'production' ? 'combined' : 'dev';
 app.use('/api', morgan(logger));
 
@@ -62,11 +66,6 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-app.use('/public', express.static(path.join(__dirname, 'public'), {
-    setHeaders: (res, path) => {
-        res.set('X-Content-Type-Options', 'nosniff'); // Prevents MIME type sniffing
-    }
-}));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
     setHeaders: (res, path) => {
         res.set('X-Content-Type-Options', 'nosniff'); // Prevents MIME type sniffing

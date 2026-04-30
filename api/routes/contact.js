@@ -41,14 +41,6 @@ router.post("/", contactLimiter, async (req, res) => {
       },
     });
 
-    console.log("Attempting to send email with the following details:");
-    console.log("Name:", name);
-    console.log("Email:", mail);
-    console.log("Message:", message);
-    console.log("Using transporter with user:", process.env.MAIL_USER);
-    console.log("Using transporter with pass:", process.env.MAIL_APP_PASS);
-    console.log("Sending email to:", process.env.MAIL_RECEIVER);
-
     const mailOptions = {
       from: `"${name}" <${process.env.MAIL_USER}>`,
       to: process.env.MAIL_RECEIVER,
